@@ -6,3 +6,61 @@ ai_docs/
 CLAUDE.md
 GEMINI.md
 AGENTS.md
+
+# environment
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# os / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# logs
+*.log
+logs/
+
+# node / frontend
+node_modules/
+dist/
+build/
+.vite/
+.npm/
+.pnpm-store/
+.yarn/
+coverage/
+*.tsbuildinfo
+
+# python / backend
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+.venv/
+venv/
+env/
+ENV/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+pip-wheel-metadata/
+*.egg-info/
+
+# local databases / runtime artifacts
+*.sqlite3
+*.db
+tmp/
+temp/
+.cache/
