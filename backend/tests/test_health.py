@@ -1,0 +1,6 @@
+def test_health_endpoint_reports_ok(client) -> None:
+    response = client.get("/api/v1/health")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok", "database": "ok"}
+    assert response.headers["X-Trace-Id"]
