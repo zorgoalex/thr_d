@@ -1,0 +1,8 @@
+# ai
+ai_docs/
+.claude/
+.gemini/
+.factory/
+CLAUDE.md
+GEMINI.md
+AGENTS.md
