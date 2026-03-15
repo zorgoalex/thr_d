@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     features_freecad_adapter: bool = False
     features_real_materials_provider: bool = False
+    features_real_templates_provider: bool = False
+    features_real_pricing_provider: bool = False
+    features_integration_endpoints: bool = False
+    features_material_drag_and_drop: bool = False
 
     model_config = SettingsConfigDict(
         env_file=".env",

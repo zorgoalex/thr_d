@@ -84,3 +84,14 @@ class DeleteExportJobResponse(BaseModel):
     id: str
     deleted: bool
     traceId: str
+
+
+class MaterialDetailResponse(BaseModel):
+    item: Material
+    traceId: str
+
+
+class IntegrationSyncResponse(BaseModel):
+    provider: str
+    status: str
+    traceId: str
