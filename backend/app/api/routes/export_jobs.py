@@ -21,6 +21,12 @@ def get_export_job(
             message=f"Export job '{job_id}' not found.",
             status_code=404,
         )
+    if job.status == "expired":
+        raise ApiError(
+            code="EXPORT_EXPIRED",
+            message="Export job has expired.",
+            status_code=410,
+        )
     return ExportJobResponse(item=job, traceId=trace_id)
 
 

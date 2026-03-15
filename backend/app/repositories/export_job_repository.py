@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 from sqlalchemy.orm import Session
 
 from app.models import ExportJobRecord
@@ -23,3 +25,13 @@ class ExportJobRepository:
         self._session.delete(record)
         self._session.commit()
         return True
+
+    def delete_expired(self) -> int:
+        now = datetime.now(UTC)
+        count = (
+            self._session.query(ExportJobRecord)
+            .filter(ExportJobRecord.expires_at < now)
+            .delete()
+        )
+        self._session.commit()
+        return count

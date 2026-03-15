@@ -24,7 +24,9 @@ def get_trace_id(request: Request) -> str:
     return getattr(request.state, "trace_id", "unknown-trace-id")
 
 
-def get_project_service() -> ProjectService:
+def get_project_service(
+    session: Session = Depends(get_db_session),
+) -> ProjectService:
     validator = CompositeProjectValidator([
         RotationValidator(),
         DimensionsValidator(),
@@ -33,7 +35,8 @@ def get_project_service() -> ProjectService:
         IntersectionsValidator(),
         ProjectLimitsValidator(),
     ])
-    return ProjectService(validator=validator)
+    export_svc = ExportJobService(repository=ExportJobRepository(session))
+    return ProjectService(validator=validator, export_job_service=export_svc)
 
 
 def get_catalog_service(

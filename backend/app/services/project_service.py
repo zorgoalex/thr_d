@@ -1,5 +1,11 @@
+from __future__ import annotations
+
 from datetime import UTC, datetime, timedelta
+from typing import TYPE_CHECKING
 from uuid import uuid4
+
+if TYPE_CHECKING:
+    from app.services.export_service import ExportJobService
 
 from app.exporters.csv_exporter import export_csv
 from app.exporters.json_exporter import export_json
@@ -16,8 +22,13 @@ EXPORT_TTL_MINUTES = 15
 
 
 class ProjectService:
-    def __init__(self, validator: ProjectValidator) -> None:
+    def __init__(
+        self,
+        validator: ProjectValidator,
+        export_job_service: ExportJobService | None = None,
+    ) -> None:
         self._validator = validator
+        self._export_job_service = export_job_service
 
     def validate(self, project: Project, trace_id: str) -> ValidateProjectResponse:
         issues = self._validator.validate(project)
@@ -76,5 +87,13 @@ class ProjectService:
                     error=f"Format '{fmt.value}' is not implemented in MVP.",
                     traceId=trace_id,
                 ))
+
+        # Persist jobs to DB
+        if self._export_job_service:
+            for job in jobs:
+                try:
+                    self._export_job_service.create_job(job)
+                except Exception:
+                    pass  # Don't fail export if DB write fails
 
         return ExportProjectResponse(jobs=jobs, traceId=trace_id)
