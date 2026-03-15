@@ -1,3 +1,4 @@
+import { apiFetch } from '@/lib/api-client'
 import type { Project } from '@/types/project'
 
 export function exportProjectJson(project: Project): void {
@@ -48,4 +49,30 @@ export async function importProjectJson(
   }
 
   return { project: obj as unknown as Project, warnings }
+}
+
+interface ExportApiJob {
+  inlineContent?: string | null
+}
+
+interface ExportApiResponse {
+  jobs: ExportApiJob[]
+  traceId: string
+}
+
+export async function exportSpecificationCsv(project: Project): Promise<void> {
+  const res = await apiFetch<ExportApiResponse>('/projects/export', {
+    method: 'POST',
+    body: JSON.stringify({ project, formats: ['specification.csv'] }),
+  })
+  const content = res.jobs[0]?.inlineContent
+  if (!content) throw new Error('No CSV content in response.')
+
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${project.name || 'specification'}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
 }

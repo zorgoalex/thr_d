@@ -164,6 +164,7 @@ class ExportJob(BaseModel):
     createdAt: datetime
     expiresAt: datetime
     downloadUrl: str | None = None
+    inlineContent: str | None = None
     error: str | None = None
     traceId: str
 

@@ -1,5 +1,7 @@
-import { useCallback, useMemo } from 'react'
+import { useThree } from '@react-three/fiber'
+import { useCallback, useEffect, useMemo } from 'react'
 
+import { setScene } from '@/lib/scene-ref'
 import { useProjectStore } from '@/store/project-store'
 
 import { CameraController } from './camera-controller'
@@ -23,6 +25,10 @@ export function SceneContent() {
   }, [validationIssues])
 
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds])
+
+  // Expose scene for GLB export
+  const { scene } = useThree()
+  useEffect(() => { setScene(scene) }, [scene])
   const setSelection = useProjectStore((s) => s.setSelection)
   const handleSelect = useCallback((id: string) => setSelection([id]), [setSelection])
 

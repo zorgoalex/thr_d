@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 
-import { exportProjectJson, importProjectJson } from '@/lib/project-io'
+import { exportSceneGlb } from '@/lib/export-glb'
+import { exportProjectJson, exportSpecificationCsv, importProjectJson } from '@/lib/project-io'
 import { useProjectStore } from '@/store/project-store'
 
 export function TopBar() {
@@ -66,10 +67,24 @@ export function TopBar() {
           disabled={!project}
           className="rounded border border-border px-2 py-1 text-xs text-foreground hover:bg-muted disabled:opacity-50"
         >
-          Export JSON
+          JSON
+        </button>
+        <button
+          onClick={() => project && exportSpecificationCsv(project).catch((err) => alert(String(err)))}
+          disabled={!project}
+          className="rounded border border-border px-2 py-1 text-xs text-foreground hover:bg-muted disabled:opacity-50"
+        >
+          CSV
+        </button>
+        <button
+          onClick={() => exportSceneGlb().catch((err) => alert(String(err)))}
+          disabled={!project}
+          className="rounded border border-border px-2 py-1 text-xs text-foreground hover:bg-muted disabled:opacity-50"
+        >
+          GLB
         </button>
         <label className="cursor-pointer rounded border border-border px-2 py-1 text-xs text-foreground hover:bg-muted">
-          Import JSON
+          Import
           <input
             ref={fileInputRef}
             type="file"

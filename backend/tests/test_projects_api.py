@@ -52,7 +52,10 @@ def test_export_returns_200_with_valid_project(client) -> None:
 
     assert response.status_code == 200
     body = response.json()
-    assert body["jobs"] == []
+    assert len(body["jobs"]) == 1
+    assert body["jobs"][0]["format"] == "project.json"
+    assert body["jobs"][0]["status"] == "ready"
+    assert body["jobs"][0]["inlineContent"]
     assert body["traceId"]
 
 
