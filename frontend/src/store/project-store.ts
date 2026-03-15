@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 
-import type { Project, Room, UIState, ValidationIssue } from '@/types/project'
+import type { CameraMode, Project, Room, UIState, ValidationIssue } from '@/types/project'
 
 export interface ProjectStore {
   // Project
@@ -23,9 +23,11 @@ export interface ProjectStore {
   leftPanelOpen: boolean
   rightPanelOpen: boolean
   activeTab: string
+  cameraMode: CameraMode
   toggleLeftPanel: () => void
   toggleRightPanel: () => void
   setActiveTab: (tab: string) => void
+  setCameraMode: (mode: CameraMode) => void
 
   // History (structure only — logic in Etap 10)
   canUndo: boolean
@@ -88,9 +90,11 @@ export const useProjectStore = create<ProjectStore>()(
     leftPanelOpen: true,
     rightPanelOpen: true,
     activeTab: 'templates',
+    cameraMode: 'perspective',
     toggleLeftPanel: () => set((s) => ({ leftPanelOpen: !s.leftPanelOpen })),
     toggleRightPanel: () => set((s) => ({ rightPanelOpen: !s.rightPanelOpen })),
     setActiveTab: (tab) => set({ activeTab: tab }),
+    setCameraMode: (mode) => set({ cameraMode: mode }),
 
     // History
     canUndo: false,
@@ -112,6 +116,7 @@ export const useProjectStore = create<ProjectStore>()(
         leftPanelOpen: s.leftPanelOpen,
         rightPanelOpen: s.rightPanelOpen,
         activeTab: s.activeTab,
+        cameraMode: s.cameraMode,
       }
     },
   })),

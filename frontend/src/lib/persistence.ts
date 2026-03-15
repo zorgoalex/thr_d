@@ -70,8 +70,9 @@ export async function loadProject(
         leftPanelOpen: uiRecord.leftPanelOpen,
         rightPanelOpen: uiRecord.rightPanelOpen,
         activeTab: uiRecord.activeTab,
+        cameraMode: (uiRecord as unknown as UIState).cameraMode ?? 'perspective',
       }
-    : { leftPanelOpen: true, rightPanelOpen: true, activeTab: 'templates' }
+    : { leftPanelOpen: true, rightPanelOpen: true, activeTab: 'templates', cameraMode: 'perspective' }
   return { project, uiState }
 }
 

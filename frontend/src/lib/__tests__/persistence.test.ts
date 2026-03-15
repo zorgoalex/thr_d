@@ -10,7 +10,7 @@ import {
 } from '@/lib/persistence'
 
 const DEFAULT_ROOM = { widthMm: 3000, lengthMm: 3000, heightMm: 2700 }
-const DEFAULT_UI = { leftPanelOpen: true, rightPanelOpen: true, activeTab: 'templates' }
+const DEFAULT_UI = { leftPanelOpen: true, rightPanelOpen: true, activeTab: 'templates', cameraMode: 'perspective' as const }
 
 describe('persistence', () => {
   beforeEach(() => {

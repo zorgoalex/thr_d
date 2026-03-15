@@ -101,8 +101,11 @@ export interface Project {
   metadata: ProjectMetadata
 }
 
+export type CameraMode = 'perspective' | 'front' | 'left' | 'right' | 'top'
+
 export interface UIState {
   leftPanelOpen: boolean
   rightPanelOpen: boolean
   activeTab: string
+  cameraMode: CameraMode
 }
