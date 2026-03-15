@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
 
 export const handlers = [
-  http.get('http://localhost:8000/api/v1/templates', () => {
+  http.get('*/api/v1/templates', () => {
     return HttpResponse.json({
       items: [
         {
@@ -47,7 +47,7 @@ export const handlers = [
     })
   }),
 
-  http.get('http://localhost:8000/api/v1/modules', () => {
+  http.get('*/api/v1/modules', () => {
     return HttpResponse.json({
       items: [
         {
@@ -85,7 +85,7 @@ export const handlers = [
     })
   }),
 
-  http.get('http://localhost:8000/api/v1/materials', () => {
+  http.get('*/api/v1/materials', () => {
     return HttpResponse.json({
       items: [
         {
