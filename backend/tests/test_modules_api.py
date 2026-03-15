@@ -3,5 +3,5 @@ def test_list_modules_returns_200(client) -> None:
 
     assert response.status_code == 200
     body = response.json()
-    assert body["items"] == []
+    assert len(body["items"]) == 10  # 4 modules + 6 parts
     assert body["traceId"]

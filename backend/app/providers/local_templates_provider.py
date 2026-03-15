@@ -1,12 +1,14 @@
 from app.providers.base import TemplatesProvider
+from app.providers.seeds import SEED_TEMPLATES
 from app.schemas.domain import Template
 
 
 class LocalTemplatesProvider(TemplatesProvider):
-    """Returns empty catalog. Seed data is added in Stage 3."""
+    def __init__(self) -> None:
+        self._templates = {t.id: t for t in SEED_TEMPLATES}
 
     def get_all(self) -> list[Template]:
-        return []
+        return list(self._templates.values())
 
     def get_by_id(self, template_id: str) -> Template | None:
-        return None
+        return self._templates.get(template_id)

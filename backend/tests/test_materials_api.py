@@ -3,7 +3,7 @@ def test_list_materials_returns_200(client) -> None:
 
     assert response.status_code == 200
     body = response.json()
-    assert body["items"] == []
+    assert len(body["items"]) == 8
     assert body["traceId"]
 
 
