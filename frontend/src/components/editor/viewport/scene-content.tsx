@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { useProjectStore } from '@/store/project-store'
 
@@ -23,6 +23,8 @@ export function SceneContent() {
   }, [validationIssues])
 
   const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds])
+  const setSelection = useProjectStore((s) => s.setSelection)
+  const handleSelect = useCallback((id: string) => setSelection([id]), [setSelection])
 
   return (
     <>
@@ -40,6 +42,7 @@ export function SceneContent() {
           materials={materials}
           isSelected={selectedSet.has(item.id)}
           hasError={errorItemIds.has(item.id)}
+          onSelect={handleSelect}
         />
       ))}
     </>

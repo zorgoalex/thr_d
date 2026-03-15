@@ -3,6 +3,7 @@ import { Component } from 'react'
 import type { ErrorInfo, ReactNode } from 'react'
 
 import { useCameraMode } from '@/hooks/use-camera-mode'
+import { useProjectStore } from '@/store/project-store'
 
 import { SceneContent } from './viewport/scene-content'
 
@@ -52,6 +53,7 @@ export function Viewport() {
         <Canvas
           gl={{ antialias: true }}
           style={{ background: '#111' }}
+          onPointerMissed={() => useProjectStore.getState().clearSelection()}
         >
           <SceneContent />
         </Canvas>

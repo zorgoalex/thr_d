@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 
+import { collectDescendants } from '@/lib/item-tree-utils'
 import type { CameraMode, Item, Material, Project, Room, UIState, ValidationIssue } from '@/types/project'
 
 export interface ProjectStore {
@@ -12,6 +13,8 @@ export interface ProjectStore {
   addItems: (items: Item[]) => void
   addMaterials: (materials: Material[]) => void
   updateItem: (id: string, partial: Partial<Item>) => void
+  updateItemsBatch: (updates: Array<{ id: string; partial: Partial<Item> }>) => void
+  deleteItems: (ids: string[]) => void
 
   // Selection
   selectedItemIds: string[]
@@ -118,6 +121,36 @@ export const useProjectStore = create<ProjectStore>()(
           ),
           metadata: { ...p.metadata, updatedAt: new Date().toISOString() },
         },
+        isDirty: true,
+      })
+    },
+    updateItemsBatch: (updates) => {
+      const p = get().project
+      if (!p) return
+      const updateMap = new Map(updates.map((u) => [u.id, u.partial]))
+      set({
+        project: {
+          ...p,
+          items: p.items.map((item) => {
+            const partial = updateMap.get(item.id)
+            return partial ? { ...item, ...partial } : item
+          }),
+          metadata: { ...p.metadata, updatedAt: new Date().toISOString() },
+        },
+        isDirty: true,
+      })
+    },
+    deleteItems: (ids) => {
+      const p = get().project
+      if (!p) return
+      const toDelete = new Set(collectDescendants(ids, p.items))
+      set({
+        project: {
+          ...p,
+          items: p.items.filter((item) => !toDelete.has(item.id)),
+          metadata: { ...p.metadata, updatedAt: new Date().toISOString() },
+        },
+        selectedItemIds: [],
         isDirty: true,
       })
     },

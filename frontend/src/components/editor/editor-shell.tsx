@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import { useEditorHotkeys } from '@/hooks/use-editor-hotkeys'
 import { useInitProject } from '@/hooks/use-init-project'
 import type { RoomSize } from '@/types/api'
 
@@ -24,6 +25,7 @@ export function EditorShell() {
   const templateId = params.get('templateId')
 
   const { isReady } = useInitProject(room, templateId)
+  useEditorHotkeys()
 
   if (!isReady) {
     return (

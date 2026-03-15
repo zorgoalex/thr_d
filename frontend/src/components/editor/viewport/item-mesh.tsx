@@ -11,9 +11,10 @@ interface ItemMeshProps {
   materials: readonly Material[]
   isSelected: boolean
   hasError: boolean
+  onSelect: (id: string) => void
 }
 
-export function ItemMesh({ item, allItems, materials, isSelected, hasError }: ItemMeshProps) {
+export function ItemMesh({ item, allItems, materials, isSelected, hasError, onSelect }: ItemMeshProps) {
   const wt = useMemo(
     () => {
       try {
@@ -37,7 +38,7 @@ export function ItemMesh({ item, allItems, materials, isSelected, hasError }: It
       position={[wt.xMm + w / 2, wt.yMm + h / 2, wt.zMm + d / 2]}
       rotation={[0, THREE.MathUtils.degToRad(wt.rotationYDeg), 0]}
     >
-      <mesh>
+      <mesh onClick={(e) => { e.stopPropagation(); onSelect(item.id) }}>
         <boxGeometry args={[w, h, d]} />
         <meshStandardMaterial color={color} />
         {isSelected && <Edges scale={1.01} color="#3b82f6" />}
