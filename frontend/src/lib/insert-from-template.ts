@@ -1,4 +1,3 @@
-import { validateProject } from '@/lib/geometry/validation'
 import { useProjectStore } from '@/store/project-store'
 import type { Template } from '@/types/api'
 import type { Item, Material } from '@/types/project'
@@ -18,7 +17,7 @@ function computeRoomCenter(
 
 /**
  * Insert a template/module into the project.
- * Expands the tree, adds items + materials, runs validation, selects root.
+ * Validation runs reactively via useValidationEffect.
  */
 export function insertFromTemplate(
   template: Template,
@@ -31,7 +30,6 @@ export function insertFromTemplate(
   const pos = computeRoomCenter(project.room, template.defaultDimensions)
   const newItems = expandItemTree(template.rootItemTreeDto, template.id, pos)
 
-  // Collect needed materials
   const materialIds = new Set(
     newItems.map((i) => i.materialId).filter(Boolean) as string[],
   )
@@ -40,12 +38,6 @@ export function insertFromTemplate(
   store.addItems(newItems)
   store.addMaterials(neededMaterials)
 
-  // Validate
-  const updatedProject = useProjectStore.getState().project!
-  const issues = validateProject(updatedProject.items, updatedProject.room)
-  store.setValidationIssues(issues)
-
-  // Select root item
   if (newItems.length > 0) {
     store.setSelection([newItems[0]!.id])
   }
@@ -63,9 +55,5 @@ export function insertCustomPanel(
 
   store.addItems([item])
   if (material) store.addMaterials([material])
-
-  const updatedProject = useProjectStore.getState().project!
-  const issues = validateProject(updatedProject.items, updatedProject.room)
-  store.setValidationIssues(issues)
   store.setSelection([item.id])
 }

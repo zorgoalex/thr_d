@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import { useEditorHotkeys } from '@/hooks/use-editor-hotkeys'
 import { useInitProject } from '@/hooks/use-init-project'
+import { useValidationEffect } from '@/hooks/use-validation-effect'
 import type { RoomSize } from '@/types/api'
 
 import { LeftPanel } from './left-panel'
@@ -26,6 +27,7 @@ export function EditorShell() {
 
   const { isReady } = useInitProject(room, templateId)
   useEditorHotkeys()
+  useValidationEffect()
 
   if (!isReady) {
     return (

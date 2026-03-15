@@ -11,7 +11,13 @@ from app.repositories.export_job_repository import ExportJobRepository
 from app.services.catalog_service import CatalogService
 from app.services.export_service import ExportJobService
 from app.services.project_service import ProjectService
-from app.validators.project_validator import StubProjectValidator
+from app.validators.composite_validator import CompositeProjectValidator
+from app.validators.dimensions_validator import DimensionsValidator
+from app.validators.intersections_validator import IntersectionsValidator
+from app.validators.project_limits_validator import ProjectLimitsValidator
+from app.validators.room_bounds_validator import RoomBoundsValidator
+from app.validators.rotation_validator import RotationValidator
+from app.validators.world_range_validator import WorldRangeValidator
 
 
 def get_trace_id(request: Request) -> str:
@@ -19,7 +25,15 @@ def get_trace_id(request: Request) -> str:
 
 
 def get_project_service() -> ProjectService:
-    return ProjectService(validator=StubProjectValidator())
+    validator = CompositeProjectValidator([
+        RotationValidator(),
+        DimensionsValidator(),
+        RoomBoundsValidator(),
+        WorldRangeValidator(),
+        IntersectionsValidator(),
+        ProjectLimitsValidator(),
+    ])
+    return ProjectService(validator=validator)
 
 
 def get_catalog_service(

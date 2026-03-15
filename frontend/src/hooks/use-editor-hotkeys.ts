@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 
 import { cloneItems } from '@/lib/clone-items'
-import { validateProject } from '@/lib/geometry/validation'
 import { useProjectStore } from '@/store/project-store'
 
 export function useEditorHotkeys() {
@@ -54,11 +53,6 @@ export function useEditorHotkeys() {
         if (selected.length > 0 && project) {
           const cloned = cloneItems(selected, project.items)
           store.addItems(cloned)
-          const issues = validateProject(
-            useProjectStore.getState().project!.items,
-            project.room,
-          )
-          store.setValidationIssues(issues)
           store.setSelection([cloned[0]!.id])
         }
       }
