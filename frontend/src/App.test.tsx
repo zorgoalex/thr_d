@@ -1,14 +1,15 @@
-import { render, screen } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 
-import App from './App'
+import { App } from './App'
+import { renderWithProviders, screen } from './test/test-utils'
 
 describe('App smoke test', () => {
-  it('renders the project heading', () => {
-    render(<App />)
+  it('renders the start screen at /', () => {
+    renderWithProviders(<App />)
 
     expect(
-      screen.getByRole('heading', { name: /thr_d 3d furniture constructor/i }),
+      screen.getByRole('heading', { name: /thr_d/i }),
     ).toBeInTheDocument()
-    expect(screen.getByText(/frontend shell is online/i)).toBeInTheDocument()
+    expect(screen.getByText('New empty project')).toBeInTheDocument()
   })
 })
