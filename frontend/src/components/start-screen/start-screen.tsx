@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { useHasAutosave } from '@/hooks/use-has-autosave'
+import { getLastProjectId, loadProject } from '@/lib/persistence'
+import { useProjectStore } from '@/store/project-store'
 import type { RoomSize } from '@/types/api'
 
 import { RoomSizeForm } from './room-size-form'
@@ -25,13 +28,33 @@ function buildEditorUrl(room: RoomSize, templateId?: string) {
 export function StartScreen() {
   const navigate = useNavigate()
   const [room, setRoom] = useState<RoomSize>(DEFAULT_ROOM)
+  const { hasAutosave, isChecking } = useHasAutosave()
+  const setProject = useProjectStore((s) => s.setProject)
 
   const handleNewEmpty = () => {
+    // Clear any existing project so editor creates fresh
+    useProjectStore.setState({ project: null })
     navigate(buildEditorUrl(room))
   }
 
   const handleTemplate = (templateId: string) => {
+    useProjectStore.setState({ project: null })
     navigate(buildEditorUrl(room, templateId))
+  }
+
+  const handleRestore = async () => {
+    const id = await getLastProjectId()
+    if (!id) return
+    const data = await loadProject(id)
+    if (!data) return
+    setProject(data.project)
+    useProjectStore.setState({
+      leftPanelOpen: data.uiState.leftPanelOpen,
+      rightPanelOpen: data.uiState.rightPanelOpen,
+      activeTab: data.uiState.activeTab,
+      isDirty: false,
+    })
+    navigate('/editor')
   }
 
   return (
@@ -55,9 +78,9 @@ export function StartScreen() {
           </button>
 
           <button
-            disabled
-            title="Autosave restore — Etap 5"
-            className="w-full rounded-md border border-border px-4 py-2.5 text-sm text-muted-foreground opacity-50"
+            disabled={isChecking || !hasAutosave}
+            onClick={handleRestore}
+            className="w-full rounded-md border border-border px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted disabled:opacity-50"
           >
             Restore from autosave
           </button>

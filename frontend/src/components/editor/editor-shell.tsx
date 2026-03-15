@@ -1,4 +1,8 @@
+import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
+
+import { useInitProject } from '@/hooks/use-init-project'
+import type { RoomSize } from '@/types/api'
 
 import { LeftPanel } from './left-panel'
 import { RightPanel } from './right-panel'
@@ -8,17 +12,30 @@ import { Viewport } from './viewport'
 
 export function EditorShell() {
   const [params] = useSearchParams()
-  const widthMm = Number(params.get('widthMm') ?? 3000)
-  const lengthMm = Number(params.get('lengthMm') ?? 3000)
-  const heightMm = Number(params.get('heightMm') ?? 2700)
+
+  const room: RoomSize = useMemo(
+    () => ({
+      widthMm: Number(params.get('widthMm') ?? 3000),
+      lengthMm: Number(params.get('lengthMm') ?? 3000),
+      heightMm: Number(params.get('heightMm') ?? 2700),
+    }),
+    [params],
+  )
   const templateId = params.get('templateId')
+
+  const { isReady } = useInitProject(room, templateId)
+
+  if (!isReady) {
+    return (
+      <div className="flex h-screen items-center justify-center text-muted-foreground">
+        Loading project…
+      </div>
+    )
+  }
 
   return (
     <div className="grid h-screen grid-cols-[280px_1fr_300px] grid-rows-[auto_1fr_auto]">
-      <TopBar
-        roomDims={{ widthMm, lengthMm, heightMm }}
-        templateId={templateId}
-      />
+      <TopBar />
       <LeftPanel />
       <Viewport />
       <RightPanel />
