@@ -8,7 +8,7 @@ from app.config import get_settings
 from app.db import init_database
 from app.errors import register_exception_handlers
 from app.logging_config import configure_logging
-from app.middleware import TraceIdMiddleware
+from app.middleware import BodySizeLimitMiddleware, TraceIdMiddleware
 
 settings = get_settings()
 configure_logging(settings.log_level)
@@ -29,6 +29,7 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.add_middleware(BodySizeLimitMiddleware)
     app.add_middleware(TraceIdMiddleware, settings=settings)
     app.include_router(build_api_router(), prefix=settings.api_v1_prefix)
     register_exception_handlers(app)

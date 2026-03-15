@@ -34,6 +34,7 @@ class ValidationCode(StrEnum):
     ITEM_BELOW_FLOOR = "ITEM_BELOW_FLOOR"
     INVALID_ROTATION = "INVALID_ROTATION"
     PROJECT_LIMIT_EXCEEDED = "PROJECT_LIMIT_EXCEEDED"
+    PARENT_CYCLE_DETECTED = "PARENT_CYCLE_DETECTED"
 
 
 class ExportFormat(StrEnum):
@@ -123,8 +124,8 @@ class Material(BaseModel):
 class Item(BaseModel):
     id: str
     type: ItemType
-    subtype: str
-    name: str
+    subtype: str = Field(max_length=255)
+    name: str = Field(max_length=255)
     parentId: str | None = None
     sortIndex: int = 0
     dimensions: Dimensions
@@ -171,7 +172,7 @@ class ExportJob(BaseModel):
 
 class Project(BaseModel):
     id: str
-    name: str
+    name: str = Field(max_length=255)
     version: Literal["1.0"] = PROJECT_SCHEMA_VERSION
     unit: Literal["mm"] = PROJECT_UNIT
     room: Room

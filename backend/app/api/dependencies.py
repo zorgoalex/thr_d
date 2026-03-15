@@ -14,6 +14,7 @@ from app.services.project_service import ProjectService
 from app.validators.composite_validator import CompositeProjectValidator
 from app.validators.dimensions_validator import DimensionsValidator
 from app.validators.intersections_validator import IntersectionsValidator
+from app.validators.parent_cycle_validator import ParentCycleValidator
 from app.validators.project_limits_validator import ProjectLimitsValidator
 from app.validators.room_bounds_validator import RoomBoundsValidator
 from app.validators.rotation_validator import RotationValidator
@@ -28,6 +29,7 @@ def get_project_service(
     session: Session = Depends(get_db_session),
 ) -> ProjectService:
     validator = CompositeProjectValidator([
+        ParentCycleValidator(),
         RotationValidator(),
         DimensionsValidator(),
         RoomBoundsValidator(),

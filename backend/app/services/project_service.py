@@ -1,11 +1,9 @@
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
 from uuid import uuid4
-
-if TYPE_CHECKING:
-    from app.services.export_service import ExportJobService
 
 from app.exporters.csv_exporter import export_csv
 from app.exporters.json_exporter import export_json
@@ -17,6 +15,11 @@ from app.schemas.api import (
 from app.schemas.domain import ExportFormat, ExportJob, ExportJobStatus, Project
 from app.services.specification import generate_spec_rows
 from app.validators.base import ProjectValidator
+
+if TYPE_CHECKING:
+    from app.services.export_service import ExportJobService
+
+logger = logging.getLogger(__name__)
 
 EXPORT_TTL_MINUTES = 15
 
@@ -31,7 +34,14 @@ class ProjectService:
         self._export_job_service = export_job_service
 
     def validate(self, project: Project, trace_id: str) -> ValidateProjectResponse:
+        logger.info("project.validate traceId=%s items=%d", trace_id, len(project.items))
         issues = self._validator.validate(project)
+        if issues:
+            codes = [i.code.value for i in issues]
+            logger.warning(
+                "project.validate issues=%d codes=%s traceId=%s",
+                len(issues), codes, trace_id,
+            )
         return ValidateProjectResponse(
             ok=len(issues) == 0,
             issues=issues,
@@ -41,12 +51,15 @@ class ProjectService:
     def generate_specification(
         self, project: Project, trace_id: str
     ) -> GenerateSpecificationResponse:
+        logger.info("specification.generate traceId=%s items=%d", trace_id, len(project.items))
         rows = generate_spec_rows(project)
+        logger.info("specification.generate rows=%d traceId=%s", len(rows), trace_id)
         return GenerateSpecificationResponse(rows=rows, issues=[], traceId=trace_id)
 
     def export(
         self, project: Project, formats: list[ExportFormat], trace_id: str
     ) -> ExportProjectResponse:
+        logger.info("project.export traceId=%s formats=%s", trace_id, [f.value for f in formats])
         now = datetime.now(UTC)
         expires = now + timedelta(minutes=EXPORT_TTL_MINUTES)
         jobs: list[ExportJob] = []
@@ -80,7 +93,6 @@ class ProjectService:
                 ))
 
             else:
-                # STEP, FCSTD, OBJ — not implemented in MVP
                 jobs.append(ExportJob(
                     id=job_id, format=fmt, status=ExportJobStatus.FAILED,
                     createdAt=now, expiresAt=expires,
@@ -94,6 +106,6 @@ class ProjectService:
                 try:
                     self._export_job_service.create_job(job)
                 except Exception:
-                    pass  # Don't fail export if DB write fails
+                    logger.warning("Failed to persist export job %s", job.id, exc_info=True)
 
         return ExportProjectResponse(jobs=jobs, traceId=trace_id)
