@@ -6,6 +6,10 @@ import { useProjectStore } from '@/store/project-store'
 export function TopBar() {
   const project = useProjectStore((s) => s.project)
   const setProject = useProjectStore((s) => s.setProject)
+  const canUndo = useProjectStore((s) => s.canUndo)
+  const canRedo = useProjectStore((s) => s.canRedo)
+  const undo = useProjectStore((s) => s.undo)
+  const redo = useProjectStore((s) => s.redo)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleExport = () => {
@@ -41,6 +45,22 @@ export function TopBar() {
         )}
       </div>
       <div className="flex items-center gap-2">
+        <button
+          onClick={undo}
+          disabled={!canUndo}
+          title="Undo (Ctrl+Z)"
+          className="rounded border border-border px-2 py-1 text-xs text-foreground hover:bg-muted disabled:opacity-50"
+        >
+          Undo
+        </button>
+        <button
+          onClick={redo}
+          disabled={!canRedo}
+          title="Redo (Ctrl+Y)"
+          className="rounded border border-border px-2 py-1 text-xs text-foreground hover:bg-muted disabled:opacity-50"
+        >
+          Redo
+        </button>
         <button
           onClick={handleExport}
           disabled={!project}

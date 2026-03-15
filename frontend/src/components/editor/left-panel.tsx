@@ -5,6 +5,7 @@ import { MaterialsTab } from './library/materials-tab'
 import { ModulesTab } from './library/modules-tab'
 import { PartsTab } from './library/parts-tab'
 import { TemplatesTab } from './library/templates-tab'
+import { ProjectTree } from './project-tree/project-tree'
 
 const TABS = [
   { id: 'templates', label: 'Templates' },
@@ -12,6 +13,7 @@ const TABS = [
   { id: 'parts', label: 'Parts' },
   { id: 'materials', label: 'Materials' },
   { id: 'custom-panel', label: 'Custom' },
+  { id: 'tree', label: 'Tree' },
 ] as const
 
 export function LeftPanel() {
@@ -42,6 +44,7 @@ export function LeftPanel() {
         {activeTab === 'parts' && <PartsTab />}
         {activeTab === 'materials' && <MaterialsTab />}
         {activeTab === 'custom-panel' && <CustomPanelForm />}
+        {activeTab === 'tree' && <ProjectTree />}
       </div>
     </aside>
   )
