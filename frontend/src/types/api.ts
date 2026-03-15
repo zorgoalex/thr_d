@@ -26,3 +26,24 @@ export interface RoomSize {
   lengthMm: number
   heightMm: number
 }
+
+export interface ApiMaterial {
+  id: string
+  code: string
+  name: string
+  color: string
+  textureUrl: string | null
+  thicknessMmDefault: number
+  grainDirection: string | null
+  category: string
+}
+
+export interface MaterialsResponse {
+  items: ApiMaterial[]
+  traceId: string
+}
+
+export interface ModulesResponse {
+  items: Template[]
+  traceId: string
+}

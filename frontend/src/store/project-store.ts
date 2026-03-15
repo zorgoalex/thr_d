@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 
-import type { CameraMode, Project, Room, UIState, ValidationIssue } from '@/types/project'
+import type { CameraMode, Item, Material, Project, Room, UIState, ValidationIssue } from '@/types/project'
 
 export interface ProjectStore {
   // Project
@@ -9,6 +9,9 @@ export interface ProjectStore {
   setProject: (project: Project) => void
   updateRoom: (partial: Partial<Room>) => void
   setProjectName: (name: string) => void
+  addItems: (items: Item[]) => void
+  addMaterials: (materials: Material[]) => void
+  updateItem: (id: string, partial: Partial<Item>) => void
 
   // Selection
   selectedItemIds: string[]
@@ -71,6 +74,48 @@ export const useProjectStore = create<ProjectStore>()(
         project: {
           ...p,
           name,
+          metadata: { ...p.metadata, updatedAt: new Date().toISOString() },
+        },
+        isDirty: true,
+      })
+    },
+
+    addItems: (newItems) => {
+      const p = get().project
+      if (!p) return
+      set({
+        project: {
+          ...p,
+          items: [...p.items, ...newItems],
+          metadata: { ...p.metadata, updatedAt: new Date().toISOString() },
+        },
+        isDirty: true,
+      })
+    },
+    addMaterials: (newMaterials) => {
+      const p = get().project
+      if (!p) return
+      const existingIds = new Set(p.materials.map((m) => m.id))
+      const toAdd = newMaterials.filter((m) => !existingIds.has(m.id))
+      if (toAdd.length === 0) return
+      set({
+        project: {
+          ...p,
+          materials: [...p.materials, ...toAdd],
+          metadata: { ...p.metadata, updatedAt: new Date().toISOString() },
+        },
+        isDirty: true,
+      })
+    },
+    updateItem: (id, partial) => {
+      const p = get().project
+      if (!p) return
+      set({
+        project: {
+          ...p,
+          items: p.items.map((item) =>
+            item.id === id ? { ...item, ...partial } : item,
+          ),
           metadata: { ...p.metadata, updatedAt: new Date().toISOString() },
         },
         isDirty: true,
