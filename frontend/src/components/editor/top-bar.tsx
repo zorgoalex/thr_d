@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 
+import { useTheme } from '@/hooks/use-theme'
 import { exportSceneGlb } from '@/lib/export-glb'
 import { exportProjectJson, exportSpecificationCsv, importProjectJson } from '@/lib/project-io'
 import { useProjectStore } from '@/store/project-store'
@@ -12,6 +13,7 @@ export function TopBar() {
   const undo = useProjectStore((s) => s.undo)
   const redo = useProjectStore((s) => s.redo)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const { theme, toggleTheme } = useTheme()
 
   const handleExport = () => {
     if (project) exportProjectJson(project)
@@ -93,6 +95,13 @@ export function TopBar() {
             onChange={handleImport}
           />
         </label>
+        <button
+          onClick={toggleTheme}
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+          className="rounded border border-border px-2 py-1 text-xs text-foreground hover:bg-muted"
+        >
+          {theme === 'dark' ? 'Light' : 'Dark'}
+        </button>
       </div>
     </header>
   )

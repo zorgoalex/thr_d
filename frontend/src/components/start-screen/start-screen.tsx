@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useHasAutosave } from '@/hooks/use-has-autosave'
+import { useTheme } from '@/hooks/use-theme'
 import { getLastProjectId, loadProject } from '@/lib/persistence'
 import { useProjectStore } from '@/store/project-store'
 import type { RoomSize } from '@/types/api'
@@ -30,6 +31,8 @@ export function StartScreen() {
   const [room, setRoom] = useState<RoomSize>(DEFAULT_ROOM)
   const { hasAutosave, isChecking } = useHasAutosave()
   const setProject = useProjectStore((s) => s.setProject)
+
+  const { theme, toggleTheme } = useTheme()
 
   const handleNewEmpty = () => {
     // Clear any existing project so editor creates fresh
@@ -65,6 +68,12 @@ export function StartScreen() {
           <p className="mt-1 text-sm text-muted-foreground">
             3D furniture constructor
           </p>
+          <button
+            onClick={toggleTheme}
+            className="mt-2 rounded border border-border px-3 py-1 text-xs text-muted-foreground hover:bg-muted"
+          >
+            {theme === 'dark' ? 'Light theme' : 'Dark theme'}
+          </button>
         </div>
 
         <RoomSizeForm value={room} onChange={setRoom} />
