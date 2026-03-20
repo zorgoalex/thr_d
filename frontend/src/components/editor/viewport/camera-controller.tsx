@@ -2,6 +2,7 @@ import { OrbitControls, OrthographicCamera, PerspectiveCamera } from '@react-thr
 import { useEffect, useRef } from 'react'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 
+import { setOrbitControls } from '@/lib/orbit-controls-ref'
 import { useProjectStore } from '@/store/project-store'
 
 import { getCameraPresets } from './camera-presets'
@@ -21,7 +22,9 @@ export function CameraController() {
     if (controlsRef.current) {
       controlsRef.current.target.set(...preset.target)
       controlsRef.current.update()
+      setOrbitControls(controlsRef.current)
     }
+    return () => setOrbitControls(null)
   }, [preset.target])
 
   return (

@@ -11,6 +11,8 @@ import { RoomMesh } from './room-mesh'
 export function SceneContent() {
   const items = useProjectStore((s) => s.project?.items ?? [])
   const materials = useProjectStore((s) => s.project?.materials ?? [])
+  const room = useProjectStore((s) => s.project?.room)
+  const cameraMode = useProjectStore((s) => s.cameraMode)
   const selectedIds = useProjectStore((s) => s.selectedItemIds)
   const validationIssues = useProjectStore((s) => s.validationIssues)
 
@@ -46,6 +48,8 @@ export function SceneContent() {
           item={item}
           allItems={items}
           materials={materials}
+          room={room ?? { widthMm: 3000, lengthMm: 3000, heightMm: 2700, origin: { xMm: 0, yMm: 0, zMm: 0 } }}
+          cameraMode={cameraMode}
           isSelected={selectedSet.has(item.id)}
           hasError={errorItemIds.has(item.id)}
           onSelect={handleSelect}
