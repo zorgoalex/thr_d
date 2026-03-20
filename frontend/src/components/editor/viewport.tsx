@@ -3,6 +3,7 @@ import { Component } from 'react'
 import type { ErrorInfo, ReactNode } from 'react'
 
 import { useCameraMode } from '@/hooks/use-camera-mode'
+import { useTheme } from '@/hooks/use-theme'
 import { useProjectStore } from '@/store/project-store'
 
 import { SceneContent } from './viewport/scene-content'
@@ -46,13 +47,14 @@ class ViewportErrorBoundary extends Component<
 
 export function Viewport() {
   useCameraMode()
+  const { theme } = useTheme()
 
   return (
     <main className="relative" data-testid="viewport">
       <ViewportErrorBoundary>
         <Canvas
           gl={{ antialias: true }}
-          style={{ background: '#111' }}
+          style={{ background: theme === 'dark' ? '#111' : '#e5e7eb' }}
           onPointerMissed={() => useProjectStore.getState().clearSelection()}
         >
           <SceneContent />
